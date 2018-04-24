@@ -3,16 +3,35 @@ package controller;
 import exceptions.PatientException;
 import model.Patient;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import repository.Repository;
+
+import java.io.File;
+import java.io.IOException;
 
 public class DoctorControllerTest {
 
     private DoctorController ctr;
 
+    @Rule
+    public TemporaryFolder folder= new TemporaryFolder();
+
     @Before
     public void setUp(){
-        Repository rep = new Repository("patient_test.txt", "consultation_test.txt");
+        File patient_file = null, consultation_file=null;
+        try {
+            patient_file = folder.newFile("patient_test.txt");
+            consultation_file = folder.newFile("consultation_test.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        assert patient_file != null;
+        assert consultation_file != null;
+        Repository rep = new Repository(patient_file.getName(), consultation_file.getName());
         ctr = new DoctorController(rep);
     }
 
