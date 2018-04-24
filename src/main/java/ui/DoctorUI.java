@@ -5,6 +5,7 @@ import exceptions.ConsultationException;
 import exceptions.PatientException;
 import model.Consultation;
 import model.Patient;
+import validator.ConsultationValidation;
 import validator.PatientValidation;
 
 import java.util.ArrayList;
@@ -130,24 +131,49 @@ public class DoctorUI {
             if (cmd == 2) {
                 while (true) {
                     System.out.println("Enter the PatientSSN:");
-                    String patientSSN = in.nextLine();
+                    String cnp = in.nextLine();
+                    if (cnp != null) {
+                        try {
+                            PatientValidation.ssnValidate(cnp);
+                        } catch (PatientException e) {
+                            System.out.println("SSN not valid!");
+                            break;
+                        }
+                        int exists_cnp = ctrl.getPatientBySSN(cnp);
+                        if (exists_cnp==-1){
+                            System.out.println("SSN not in the system!");
+                            break;
+                        }
+                    }
                     //Consultation c = null;
                     System.out.println("Enter the consID:");
                     String consID = in.nextLine();
+                    try{
+                        ConsultationValidation.consIdValidation(consID);
+                    } catch (ConsultationException e) {
+                        System.out.println(e.getMessage());
+                        break;
+                    }
                     System.out.println("Enter the diag:");
                     String diag = in.nextLine();
-                    System.out.println("Introduce the prescripted meds:");
+                    System.out.println("Introduce the prescribed meds:");
                     List<String> meds = RunMeds();
                     System.out.println("Date:");
                     String date = in.nextLine();
+                    try{
+                        ConsultationValidation.dateValidate(date);
+                    } catch (ConsultationException e) {
+                        System.out.println(e.getMessage());
+                        break;
+                    }
 
                     try {
-                        Consultation c = new Consultation(consID, patientSSN, diag, meds, date);
+                        Consultation c = new Consultation(consID, cnp, diag, meds, date);
                         ctrl.addConsultation(c);
                         System.out.println("> Consultation (" + consID + ") has been successfully added.");
                         break;
                     } catch (ConsultationException e) {
-                        System.out.println("Adding consultation exception! Consultation not added! Meds are null");
+                        e.getMessage();
                     }
                     break;
                 }

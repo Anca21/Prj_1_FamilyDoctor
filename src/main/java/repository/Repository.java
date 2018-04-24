@@ -14,6 +14,9 @@ public class Repository {
     private String patientsFile; // patientsFile file
     private String consultationsFile; // consultationsFile file
 
+    private List<Patient> patientList = new ArrayList<>();
+    private List<Consultation> consultationList = new ArrayList<>();
+
     public List<Patient> getPatientList() {
         return patientList;
     }
@@ -22,8 +25,6 @@ public class Repository {
         return consultationList;
     }
 
-    private List<Patient> patientList = new ArrayList<>();
-    private List<Consultation> consultationList = new ArrayList<>();
 
     public void setPatientList(List<Patient> patientList) {
         this.patientList = patientList;
@@ -133,49 +134,15 @@ public class Repository {
         for (Patient p: getPatientList())
             o.println(p.toString());
         o.close();
-//        int n = 0;
-//        BufferedReader in = new BufferedReader(new FileReader(patientsFile));
-//        while ((in.readLine()) != null)
-//            n++;
-//        in.close();
-//        String[] sl = new String[n];
-//        String str;
-//        int i = 0;
-//        in = new BufferedReader(new FileReader(patientsFile));
-//        while ((str = in.readLine()) != null) {
-//            sl[i] = str;
-//            i++;
-//        }
-//        in.close(); // append
-//        FileWriter fw = new FileWriter(patientsFile);
-//        PrintWriter out = new PrintWriter(fw);
-//        for (i = 1; i < sl.length - 1; i++)
-//            out.println(sl[i]);
-//        out.println(p.toString());
-//        out.close();
     }
 
-    public void saveConsultationToFile(Consultation c) throws IOException        // save to file
+    public void saveConsultationToFile() throws IOException        // save to file
     {
-        int n = 0;
-        BufferedReader in = new BufferedReader(new FileReader(consultationsFile));
-        while ((in.readLine()) != null)
-            n++;
-        in.close();
-        String[] sl = new String[n];
-        String str;
-        int i = 0;
-        in = new BufferedReader(new FileReader(consultationsFile));
-        while ((str = in.readLine()) != null) {
-            sl[i] = str;
-            i++;
-        }
-        in.close(); // append
-        FileWriter fw = new FileWriter(consultationsFile);
-        PrintWriter out = new PrintWriter(fw);
-        for (i = 0; i < sl.length - 1; i++)
-            out.println(sl[i]);
-        out.println(c.toString());
-        out.close();
+        FileOutputStream f = new FileOutputStream(new File(consultationsFile));
+        PrintWriter o = new PrintWriter(f);
+
+        for (Consultation c: getConsultationList())
+            o.println(c.toString());
+        o.close();
     }
 }

@@ -5,6 +5,7 @@ import exceptions.PatientException;
 import model.Consultation;
 import model.Patient;
 import repository.Repository;
+import validator.ConsultationValidation;
 import validator.PatientValidation;
 
 import java.io.IOException;
@@ -35,9 +36,10 @@ public class DoctorController {
 		rep.setConsultationList(consultationList);
 	}
 
-	private int getPatientBySSN(String SSN) {
-		for (int i = 0; i < rep.getPatientList().size(); i++) {
-			if (Objects.equals(rep.getPatientList().get(i).getSSN(), SSN))
+	public int getPatientBySSN(String SSN) {
+	    List<Patient> temp = rep.getPatientsFromFile();
+		for (int i = 0; i < temp.size(); i++) {
+			if (Objects.equals(temp.get(i).getSSN(), SSN))
 				return i;
 		}
 
@@ -45,17 +47,12 @@ public class DoctorController {
 	}
 
 	public int getConsByID(String ID) {
-		for (int i = 0; i < rep.getConsultationList().size(); i++) {
-			if (rep.getConsultationList().get(i).getConsID().compareTo(ID) == 0) {
-				/*
-				 * System.out.println("I proud to have found " + ID + " here: "
-				 * + i); System.out.println("Proof : " +
-				 * ConsultationList.get(i).toString());
-				 */
-				return i - 1;
+	    List<Consultation> temp = rep.getConsultationsFromFile();
+		for (int i = 0; i < temp.size(); i++) {
+			if (Objects.equals(temp.get(i).getConsID(), ID)) {
+				return i;
 			}
 		}
-
 		return -1;
 	}
 
@@ -79,16 +76,23 @@ public class DoctorController {
 	// diagnostic, prescription drugs)
 
 	public void addConsultation(Consultation c) throws ConsultationException {
-		if (c.getMeds() == null)
-			throw new ConsultationException("meds is null");
-			List<Consultation> temp = rep.getConsultationList();
-			temp.add(c);
-			rep.setConsultationList(temp);
-			try {
-				rep.saveConsultationToFile(c);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (c.getMeds() == null || c.getMeds().size()==0) {
+            System.out.println("Meds list is empty!");
+            throw new ConsultationException("Meds list is empty!");
+        }
+		if (getPatientBySSN(c.getPatientSSN())==-1) {
+            System.out.println("Patient not in the system!");
+            throw new ConsultationException("Patient not in the system!");
+        }
+		ConsultationValidation.consIdValidation(c.getConsID());
+        ConsultationValidation.dateValidate(c.getConsultation_date());
+		List<Consultation> temp = rep.getConsultationList();
+		temp.add(c);
+		rep.setConsultationList(temp);
+		try {
+				rep.saveConsultationToFile();
+		} catch (IOException e) {
+				e.printStackTrace(); }
 	}
 
 	public List<Patient> getPatientsWithDisease(String disease) throws PatientException {

@@ -12,13 +12,11 @@ public class Patient implements Serializable {
     /**
      * Constructors
      */
-
-    public Patient() {
-    }
-    public Patient(String SSN, String Name, String address) {
+    public Patient(){}
+    public Patient(String SSN,String Name, String address) {
         this.Patient_ID = SSN;
-        this.Name = Name;
         this.SSN = SSN;
+        this.Name = Name;
         this.address = address;
         this.consNum = 0;
     }
@@ -70,6 +68,6 @@ public class Patient implements Serializable {
      * Others
      */
     public String toString() {
-        return String.format("%s,%s,%s", Name, SSN, address);
+        return String.format("%s,%s,%s", SSN, Name, address);
     }
 }

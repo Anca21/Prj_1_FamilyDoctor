@@ -1,37 +1,35 @@
 package validator;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import exceptions.ConsultationException;
 
-import repository.Repository;
-import exceptions.PatientException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConsultationValidation {
-	public static void ssidValidate(String name, Repository rep) throws PatientException {
-		if (name.length() == 0) {
-			throw new PatientException("One of the required fields is empty!");
+	public static void consIdValidation(String id) throws  ConsultationException {
+		if (id.length() == 0) {
+			System.out.println("One of the required fields is empty!");
+			throw new ConsultationException("One of the required fields is empty!");
 		}
-		Pattern pattern = Pattern.compile("^[a-zA-Z -]+$");
-		Matcher matcher = pattern.matcher(name);
+		Pattern pattern = Pattern.compile("^[0-9]+$");
+		Matcher matcher = pattern.matcher(id);
 		if (!matcher.find()) {
-			throw new PatientException("The \"name\" field has an invalid format!");
+			System.out.println("The \"id\" field has an invalid format!");
+			throw new ConsultationException("The \"id\" field has an invalid format!");
 		}
 	}
 	
-	public static void ssnValidate(String ssn) throws PatientException {
-		if (ssn.length() != 13) {
-			throw new PatientException("SSN has the length != 13");
+	public static void dateValidate(String date) throws ConsultationException {
+		if (date.length() != 10) {
+			System.out.println("Invalid date!");
+			throw new ConsultationException("Incorrect date!");
 		}
-		Pattern pattern = Pattern.compile("^\\d+$");
-		Matcher matcher = pattern.matcher(ssn);
+		Pattern pattern = Pattern.compile("^[0-9]{2}-[0-9]{2}-[0-9]{4}$");
+		Matcher matcher = pattern.matcher(date);
 		if (!matcher.find()) {
-			throw new PatientException("The \"ssn\" field has an invalid format!");
+			System.out.println("The \"date\" field has an invalid format!");
+			throw new ConsultationException("The \"date\" field has an invalid format!");
 		}
 	}
-	
-	public static void addressValidate(String address) throws PatientException {
-		if (address.length() == 0) {
-			throw new PatientException("One of the required fields is empty!");
-		}
-	}
+
 }

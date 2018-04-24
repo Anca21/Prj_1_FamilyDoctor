@@ -12,14 +12,12 @@ public class Consultation implements Serializable {
     private String consultation_date;
 
     public Consultation() {
-        this.consID = new String();
-        this.PatientSSN = new String();
-        this.diag = new String();
-        this.meds = new ArrayList<String>();
-        this.consultation_date = new String();
+        this.consID = "";
+        this.PatientSSN = "";
+        this.diag = "";
+        this.meds = new ArrayList<>();
+        this.consultation_date = "";
     }
-
-    ;
 
     public Consultation(String consID, String PatientSSN, String diag, List<String> meds, String date) {
         this.consID = consID;
