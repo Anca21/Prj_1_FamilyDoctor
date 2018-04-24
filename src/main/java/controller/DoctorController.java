@@ -5,6 +5,7 @@ import exceptions.PatientException;
 import model.Consultation;
 import model.Patient;
 import repository.Repository;
+import validator.PatientValidation;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,35 +13,31 @@ import java.util.Objects;
 
 public class DoctorController {
 
-	private List<Patient> PatientList;
-	private List<Consultation> ConsultationList;
 	private Repository rep;
 
 	/** Constructors */
 
 	public DoctorController(Repository rep) {
 		this.rep = rep;
-		this.PatientList = rep.getPatientList();
-		this.ConsultationList = rep.getConsultationList();
 		// Get list from file in order to avoid duplicates.
 	}
 
 	/** Getters */
-	public List<Patient> getPatientList() {
-		return PatientList;
+	private List<Patient> getPatientList() {
+		return rep.getPatientList();
 	}
 
-	public List<Consultation> getConsultationList() {
-		return ConsultationList;
+	private List<Consultation> getConsultationList() {
+		return rep.getConsultationList();
 	}
 
 	public void setConsulationList(List<Consultation> consultationList) {
-		ConsultationList = consultationList;
+		rep.setConsultationList(consultationList);
 	}
 
-	public int getPatientBySSN(String SSN) {
-		for (int i = 0; i < PatientList.size(); i++) {
-			if (Objects.equals(PatientList.get(i).getSSN(), SSN))
+	private int getPatientBySSN(String SSN) {
+		for (int i = 0; i < rep.getPatientList().size(); i++) {
+			if (Objects.equals(rep.getPatientList().get(i).getSSN(), SSN))
 				return i;
 		}
 
@@ -48,8 +45,8 @@ public class DoctorController {
 	}
 
 	public int getConsByID(String ID) {
-		for (int i = 0; i < ConsultationList.size(); i++) {
-			if (ConsultationList.get(i).getConsID().compareTo(ID) == 0) {
+		for (int i = 0; i < rep.getConsultationList().size(); i++) {
+			if (rep.getConsultationList().get(i).getConsID().compareTo(ID) == 0) {
 				/*
 				 * System.out.println("I proud to have found " + ID + " here: "
 				 * + i); System.out.println("Proof : " +
@@ -62,22 +59,17 @@ public class DoctorController {
 		return -1;
 	}
 
-	public Repository getRepository() {
-		return rep;
-	}
-
 	/** Others */
-	public void addPatient(Patient p) {
-//		if (p.getName() != null && p.getSSN() != null && p.getAddress() != null) {
-//			PatientValidation.nameValidate(p.getName());
-//			PatientValidation.ssnValidate(p.getSSN());
-//			PatientValidation.addressValidate(p.getAddress());
-//		} else {
-//			throw new PatientException("Null fields");
-//		}
-		PatientList.add(p);
+	public void addPatient(Patient p) throws PatientException {
+
+		List<Patient> temp = rep.getPatientList();
+		PatientValidation.ssnValidate(p.getSSN());
+		PatientValidation.addressValidate(p.getAddress());
+		PatientValidation.nameValidate(p.getName());
+		temp.add(p);
+		rep.setPatientList(temp);
 		try {
-			rep.savePatientToFile(p);
+			rep.savePatientToFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -86,27 +78,17 @@ public class DoctorController {
 	// adding of a new consultation for a patient (consultation date,
 	// diagnostic, prescription drugs)
 
-	public void addConsultation(String consID, String patientSSN, String diag, List<String> meds, String date) throws ConsultationException {
-		if (meds == null)
+	public void addConsultation(Consultation c) throws ConsultationException {
+		if (c.getMeds() == null)
 			throw new ConsultationException("meds is null");
-
-//		if (consID != null && patientSSN != null
-//				&& diag != null && meds.size() != 0
-//				&& this.getPatientBySSN(patientSSN) > -1
-//				&& this.getConsByID(consID) == -1) {
-			Consultation c = new Consultation(consID, patientSSN, diag, meds, date);
-			ConsultationList.add(c);
+			List<Consultation> temp = rep.getConsultationList();
+			temp.add(c);
+			rep.setConsultationList(temp);
 			try {
 				rep.saveConsultationToFile(c);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-//			Patient p = new Patient();
-//			p = this.getPatientList().get(
-//					this.getPatientBySSN(c.getPatientSSN()));
-//			p.setConsNum(p.getConsNum() + 1);
-
 	}
 
 	public List<Patient> getPatientsWithDisease(String disease) throws PatientException {
