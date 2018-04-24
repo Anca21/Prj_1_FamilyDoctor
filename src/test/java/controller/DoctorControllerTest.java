@@ -44,7 +44,7 @@ public class DoctorControllerTest {
     }
 
     @Test()
-    public void addPatientWithSuccess() throws PatientException {
+    public void addPatientWithSuccessTest() throws PatientException {
         Patient p = new Patient();
         p.setPatient_ID("1");
         p.setSSN("1212121212121");
